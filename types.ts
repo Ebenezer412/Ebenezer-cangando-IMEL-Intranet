@@ -15,16 +15,30 @@ export interface User {
   email?: string;
   avatar?: string;
   turma?: string;
+  studentIds?: string[]; // IDs dos educandos associados (para Encarregados)
 }
 
 export interface Grade {
   id: string;
   studentId: string;
+  studentName: string; 
   subject: string;
   mac: number;
   npp: number;
   npt: number;
   average: number;
+  faltas: number;
+  updatedBy?: string;
+  updatedAt?: string;
+}
+
+export interface AuditLog {
+  id: string;
+  user: string;
+  action: string;
+  target: string;
+  timestamp: string;
+  details: string;
 }
 
 export interface ClassSchedule {
@@ -54,10 +68,17 @@ export interface Message {
   read: boolean;
 }
 
-// Add SidebarItem interface for the sidebar navigation
 export interface SidebarItem {
   icon: any;
   label: string;
   path: string;
   roles: UserRole[];
+}
+
+export interface SystemSettings {
+  schoolName: string;
+  schoolAcronym: string;
+  primaryColor: string;
+  secondaryColor: string;
+  version: string;
 }

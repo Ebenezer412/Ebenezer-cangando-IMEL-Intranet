@@ -1,9 +1,6 @@
 
-import React from 'react';
 import { 
   LayoutDashboard, 
-  GraduationCap, 
-  BookOpen, 
   Users, 
   ClipboardList, 
   Calendar, 
@@ -11,62 +8,82 @@ import {
   MessageSquare, 
   Settings, 
   BarChart3, 
-  ShieldCheck,
   Library,
   History,
-  AlertCircle
+  Palette,
+  Eye,
+  Activity,
+  Briefcase,
+  FileBarChart,
+  BookMarked,
+  Clock,
+  BookOpen,
+  ShieldCheck
 } from 'lucide-react';
 import { UserRole, SidebarItem, Grade, ClassSchedule, User } from './types';
 
-export const PRIMARY_COLOR = '#003366'; // IMEL Blue
-export const SECONDARY_COLOR = '#FFD700'; // IMEL Gold/Yellow
+export const DEFAULT_PRIMARY_COLOR = '#003366'; 
+export const DEFAULT_SECONDARY_COLOR = '#FFD700'; 
 
 export const TEST_USERS: User[] = [
-  { id: '1', name: 'João Manuel', processNumber: '2024001', role: UserRole.ALUNO },
+  { id: '1', name: 'João Manuel', processNumber: '2024001', role: UserRole.ALUNO, turma: '12A' },
+  { id: '10', name: 'Ana Manuel', processNumber: '2024010', role: UserRole.ALUNO, turma: '10C' },
   { id: '2', name: 'Carlos Mendes', processNumber: '300100', role: UserRole.PROFESSOR },
-  { id: '3', name: 'Admin Geral', processNumber: '999000', role: UserRole.ADMIN },
-  { id: '4', name: 'Maria Silva', processNumber: '888000', role: UserRole.DIRETOR },
-  { id: '5', name: 'Pedro João', processNumber: '777000', role: UserRole.ENCARREGADO },
+  { id: '3', name: 'Admin do Sistema', processNumber: '999000', role: UserRole.ADMIN },
+  { id: '4', name: 'Dr. Augusto Feliciano', processNumber: '888000', role: UserRole.DIRETOR },
+  { id: '5', name: 'Pedro João', processNumber: '777000', role: UserRole.ENCARREGADO, studentIds: ['1', '10'] },
 ];
 
 export const SIDEBAR_LINKS: SidebarItem[] = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', roles: Object.values(UserRole) },
+  // --- DASHBOARDS ESPECÍFICOS ---
+  { icon: LayoutDashboard, label: 'Painel do Aluno', path: '/dashboard', roles: [UserRole.ALUNO] },
+  { icon: LayoutDashboard, label: 'Painel Docente', path: '/dashboard', roles: [UserRole.PROFESSOR] },
+  { icon: LayoutDashboard, label: 'Portal do Encarregado', path: '/dashboard', roles: [UserRole.ENCARREGADO] },
+  { icon: LayoutDashboard, label: 'Direcção Geral', path: '/dashboard', roles: [UserRole.DIRETOR] },
+  { icon: LayoutDashboard, label: 'Administração', path: '/dashboard', roles: [UserRole.ADMIN] },
   
-  // Aluno
+  // --- ALUNO / ENCARREGADO ---
   { icon: FileText, label: 'Minhas Notas', path: '/notas', roles: [UserRole.ALUNO] },
-  { icon: Calendar, label: 'Horário Escolar', path: '/horario', roles: [UserRole.ALUNO, UserRole.PROFESSOR] },
-  { icon: Library, label: 'Biblioteca Digital', path: '/biblioteca', roles: [UserRole.ALUNO, UserRole.PROFESSOR] },
-  { icon: History, label: 'Histórico Académico', path: '/historico', roles: [UserRole.ALUNO] },
+  { icon: FileText, label: 'Notas do Educando', path: '/notas', roles: [UserRole.ENCARREGADO] },
+  { icon: Clock, label: 'Minha Assiduidade', path: '/frequencia', roles: [UserRole.ALUNO] },
+  { icon: Clock, label: 'Faltas do Educando', path: '/frequencia', roles: [UserRole.ENCARREGADO] },
+  { icon: Calendar, label: 'Horário de Aulas', path: '/horario', roles: [UserRole.ALUNO] },
+  { icon: Calendar, label: 'Horário Escolar', path: '/horario', roles: [UserRole.ENCARREGADO] },
+  { icon: BookOpen, label: 'Recursos Didácticos', path: '/biblioteca', roles: [UserRole.ALUNO] },
+  { icon: BookOpen, label: 'Materiais de Apoio', path: '/biblioteca', roles: [UserRole.ENCARREGADO] },
+  { icon: History, label: 'Histórico Escolar', path: '/historico', roles: [UserRole.ALUNO] },
+  { icon: History, label: 'Percurso Académico', path: '/historico', roles: [UserRole.ENCARREGADO] },
 
-  // Professor
-  { icon: Users, label: 'Gestão de Turmas', path: '/turmas', roles: [UserRole.PROFESSOR, UserRole.DIRETOR] },
-  { icon: ClipboardList, label: 'Registo de Notas', path: '/gestao-notas', roles: [UserRole.PROFESSOR] },
-  { icon: FileText, label: 'Materiais Didáticos', path: '/materiais', roles: [UserRole.PROFESSOR] },
-
-  // Admin
-  { icon: Users, label: 'Gestão de Usuários', path: '/admin/usuarios', roles: [UserRole.ADMIN] },
-  { icon: ShieldCheck, label: 'Monitoramento', path: '/admin/logs', roles: [UserRole.ADMIN] },
+  // --- PROFESSOR ---
+  { icon: ClipboardList, label: 'Pauta de Avaliação', path: '/gestao-notas', roles: [UserRole.PROFESSOR] },
+  { icon: Calendar, label: 'Horário Docente', path: '/horario', roles: [UserRole.PROFESSOR] },
+  { icon: Library, label: 'Gestão de Conteúdos', path: '/biblioteca', roles: [UserRole.PROFESSOR] },
   
-  // Diretor
-  { icon: BarChart3, label: 'Estatísticas', path: '/stats', roles: [UserRole.DIRETOR] },
-  { icon: FileText, label: 'Relatórios Gerenciais', path: '/relatorios', roles: [UserRole.DIRETOR, UserRole.ADMIN] },
+  // --- DIRETOR GERAL ---
+  { icon: BarChart3, label: 'Análise Estatística', path: '/stats', roles: [UserRole.DIRETOR] },
+  { icon: Briefcase, label: 'Controlo Pedagógico', path: '/direcao/professores', roles: [UserRole.DIRETOR] },
+  { icon: Eye, label: 'Gestão de Alunos', path: '/direcao/alunos', roles: [UserRole.DIRETOR] },
+  { icon: BookMarked, label: 'Estrutura Escolar', path: '/direcao/institucional', roles: [UserRole.DIRETOR] },
+  { icon: FileBarChart, label: 'Mapas de Gestão', path: '/direcao/relatorios', roles: [UserRole.DIRETOR] },
+  { icon: Activity, label: 'Registos de Auditoria', path: '/direcao/auditoria', roles: [UserRole.DIRETOR] },
 
-  // Comum
-  { icon: MessageSquare, label: 'Mensagens', path: '/mensagens', roles: Object.values(UserRole) },
+  // --- ADMINISTRADOR ---
+  { icon: Users, label: 'Contas de Acesso', path: '/admin/usuarios', roles: [UserRole.ADMIN] },
+  { icon: Palette, label: 'Identidade Visual', path: '/admin/branding', roles: [UserRole.ADMIN] },
+  { icon: Activity, label: 'Auditoria do Sistema', path: '/direcao/auditoria', roles: [UserRole.ADMIN] },
+
+  // --- COMUM ---
+  { icon: MessageSquare, label: 'Comunicação', path: '/mensagens', roles: Object.values(UserRole) },
   { icon: Settings, label: 'Configurações', path: '/config', roles: Object.values(UserRole) },
 ];
 
-// Added missing id and studentId to satisfy Grade interface
 export const MOCK_GRADES: Grade[] = [
-  { id: 'g0', studentId: '1', subject: 'Economia Política', mac: 14, npp: 13, npt: 15, average: 14 },
-  { id: 'g1', studentId: '1', subject: 'Contabilidade Geral', mac: 16, npp: 17, npt: 15, average: 16 },
-  { id: 'g2', studentId: '1', subject: 'Matemática Aplicada', mac: 12, npp: 11, npt: 13, average: 12 },
-  { id: 'g3', studentId: '1', subject: 'Língua Portuguesa', mac: 15, npp: 14, npt: 16, average: 15 },
+  { id: 'g0', studentId: '1', studentName: 'João Manuel', subject: 'Economia Política', mac: 14, npp: 13, npt: 15, average: 14, faltas: 2, updatedAt: '2024-05-20', updatedBy: 'Carlos Mendes' },
+  { id: 'g1', studentId: '1', studentName: 'João Manuel', subject: 'Contabilidade Geral', mac: 16, npp: 17, npt: 15, average: 16, faltas: 0, updatedAt: '2024-05-21', updatedBy: 'Carlos Mendes' },
+  { id: 'g4', studentId: '10', studentName: 'Ana Manuel', subject: 'Língua Portuguesa', mac: 18, npp: 17, npt: 19, average: 18, faltas: 0, updatedAt: '2024-05-19', updatedBy: 'Carlos Mendes' },
 ];
 
-// Added missing id and turma to satisfy ClassSchedule interface
 export const MOCK_SCHEDULE: ClassSchedule[] = [
   { id: 's0', day: 'Segunda', time: '07:30 - 09:00', subject: 'Economia Política', room: 'Sala 12', turma: '12A' },
   { id: 's1', day: 'Segunda', time: '09:15 - 10:45', subject: 'Contabilidade', room: 'Laboratório 2', turma: '12A' },
-  { id: 's2', day: 'Terça', time: '07:30 - 09:00', subject: 'Informática', room: 'TI Hub', turma: '12A' },
 ];

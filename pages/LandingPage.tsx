@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   GraduationCap, 
@@ -9,105 +9,183 @@ import {
   ArrowRight,
   Database,
   MapPin,
-  Sun,
-  Moon,
-  Languages
+  MessageSquare,
+  CheckCircle,
+  Clock,
+  Send,
+  HelpCircle,
+  Lightbulb,
+  Layout,
+  Smartphone
 } from 'lucide-react';
-import { useSettings } from '../App';
+import { useSettings, useSystemAdmin } from '../App';
 
 const LandingPage: React.FC = () => {
-  const { theme, lang, toggleTheme, toggleLang, t } = useSettings();
+  const { theme, t } = useSettings();
+  const { settings } = useSystemAdmin();
+  const [formSent, setFormSent] = useState(false);
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormSent(true);
+    setTimeout(() => setFormSent(false), 5000);
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 transition-colors duration-300">
-      {/* Navbar */}
+      {/* Barra de Navegação */}
       <nav className="px-8 py-6 flex items-center justify-between max-w-7xl mx-auto sticky top-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-50">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-[#003366] rounded-lg flex items-center justify-center text-white">
+          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
             <GraduationCap size={24} />
           </div>
-          <span className="font-extrabold text-2xl tracking-tighter text-[#003366] dark:text-white">IMEL <span className="text-[#FFD700]">Intranet</span></span>
+          <span className="font-extrabold text-2xl tracking-tighter text-primary dark:text-white">
+            {settings.schoolAcronym}
+          </span>
         </div>
         
-        <div className="flex items-center gap-4 md:gap-8">
-          <div className="hidden md:flex items-center gap-6 mr-4 border-r border-slate-200 dark:border-slate-700 pr-6">
-            <a href="#features" className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-[#003366] dark:hover:text-[#FFD700]">{t('features')}</a>
-            <a href="#location" className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-[#003366] dark:hover:text-[#FFD700]">{t('location')}</a>
+        <div className="flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-8 mr-6">
+            <a href="#features" className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors uppercase tracking-widest">{t('features')}</a>
+            <a href="#advantages" className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors uppercase tracking-widest">Vantagens</a>
+            <a href="#location" className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors uppercase tracking-widest">{t('location')}</a>
           </div>
           
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={toggleLang}
-              className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-500 dark:text-slate-400 transition-all flex items-center gap-2"
-              title="Change Language"
-            >
-              <Languages size={20} />
-              <span className="text-xs font-bold uppercase">{lang}</span>
-            </button>
-            <button 
-              onClick={toggleTheme}
-              className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-500 dark:text-slate-400 transition-all"
-              title="Toggle Theme"
-            >
-              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-            </button>
-          </div>
-
           <Link 
             to="/login" 
-            className="hidden sm:block px-6 py-2.5 bg-[#003366] text-white rounded-full text-sm font-bold shadow-lg shadow-blue-900/20 hover:scale-105 transition-transform"
+            className="px-8 py-3 bg-primary text-white rounded-xl text-sm font-black shadow-lg hover:scale-105 active:scale-95 transition-all"
           >
-            {t('access_btn')}
+            {t('login_btn')}
           </Link>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <header className="relative pt-12 pb-24 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-8 grid lg:grid-cols-2 gap-16 items-center">
-          <div className="z-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-[#003366] dark:text-blue-300 rounded-full text-sm font-bold mb-8">
-              <Zap size={16} /> Nova Atualização v2.5
+      <header className="relative pt-16 pb-28 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-8 grid lg:grid-cols-2 gap-20 items-center">
+          <div className="z-10 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 text-primary rounded-full text-xs font-black mb-8 uppercase tracking-widest">
+              <Zap size={14} className="text-secondary" /> Plataforma Digital Oficial
             </div>
             <h1 className="text-5xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[1.1] mb-8">
               Gestão Escolar <br />
-              <span className="text-[#003366] dark:text-[#FFD700]">Inteligente e Conectada</span>
+              <span className="text-primary dark:text-secondary italic">Inteligente</span>
             </h1>
-            <p className="text-xl text-slate-600 dark:text-slate-400 mb-10 leading-relaxed max-w-lg">
-              Sistema interno que centraliza alunos, professores e coordenação num ambiente seguro, moderno e eficiente. Projetado para o futuro do IMEL.
+            <p className="text-xl text-slate-600 dark:text-slate-400 mb-12 leading-relaxed max-w-xl mx-auto lg:mx-0">
+              Aceda a notas, horários, recursos didácticos e comunique com a instituição através de uma plataforma centralizada e moderna.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link 
                 to="/login" 
-                className="flex items-center justify-center gap-3 px-10 py-5 bg-[#003366] text-white rounded-2xl text-lg font-bold shadow-2xl shadow-blue-900/40 hover:bg-[#002244] transition-all group"
+                className="flex items-center justify-center gap-3 px-10 py-5 bg-primary text-white rounded-2xl text-lg font-black shadow-2xl hover:translate-y-[-2px] transition-all group"
               >
                 {t('start_now')} <ArrowRight className="group-hover:translate-x-1 transition-transform" />
               </Link>
-              <button className="px-10 py-5 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-2xl text-lg font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
-                {t('demo')}
-              </button>
+              <a href="#features" className="px-10 py-5 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-2xl text-lg font-black hover:bg-slate-50 transition-all text-center">
+                Saber Mais
+              </a>
             </div>
           </div>
-          <div className="relative">
-            <div className="absolute -top-12 -left-12 w-64 h-64 bg-[#FFD700] rounded-full blur-3xl opacity-20 animate-pulse"></div>
-            <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-[#003366] rounded-full blur-3xl opacity-20"></div>
-            <div className="relative rounded-[2.5rem] overflow-hidden border-8 border-white dark:border-slate-800 shadow-2xl rotate-3 transform hover:rotate-0 transition-all duration-700">
+          <div className="relative hidden lg:block animate-fade">
+            <div className="relative rounded-[3rem] overflow-hidden border-[12px] border-white dark:border-slate-800 shadow-2xl rotate-2 hover:rotate-0 transition-all duration-1000">
               <img 
                 src="https://tecpleta.com/midias/noticias/584979.jpg" 
-                alt="IMEL School" 
-                className="w-full h-auto object-cover"
+                alt={settings.schoolName} 
+                className="w-full h-[600px] object-cover"
               />
+              <div className="absolute inset-0 bg-primary/10"></div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Location Section */}
-      <section id="location" className="py-24 bg-slate-50 dark:bg-slate-800/50 transition-colors">
+      {/* Funcionalidades */}
+      <section id="features" className="py-24 bg-slate-50 dark:bg-slate-800/20 transition-colors scroll-mt-20">
         <div className="max-w-7xl mx-auto px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="order-2 lg:order-1">
-              <div className="h-[400px] w-full rounded-[2.5rem] overflow-hidden bg-slate-200 dark:bg-slate-700 shadow-xl border-4 border-white dark:border-slate-800">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-6 uppercase tracking-tight">{t('features')}</h2>
+            <p className="text-slate-500 max-w-3xl mx-auto text-lg italic">Uma infraestrutura digital completa para suprir as necessidades de toda a comunidade académica.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { icon: Layout, title: "Painel Individual", desc: "Acessos personalizados para Alunos, Encarregados, Professores e Direcção." },
+              { icon: CheckCircle, title: "Gestão Académica", desc: "Lançamento e consulta de notas, pautas e assiduidade em tempo real." },
+              { icon: MessageSquare, title: "Comunicação", desc: "Canal directo de mensagens internas entre a escola e a família." },
+              { icon: Smartphone, title: "Acessibilidade", desc: "Plataforma optimizada para aceder em computadores, tablets ou smartphones." }
+            ].map((feature, i) => (
+              <div key={i} className="bg-white dark:bg-slate-800 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl transition-all hover:translate-y-[-5px]">
+                <div className="w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center mb-6">
+                  <feature.icon size={28} />
+                </div>
+                <h3 className="text-lg font-black mb-3 dark:text-white uppercase tracking-wide">{feature.title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Vantagens */}
+      <section id="advantages" className="py-24 max-w-7xl mx-auto px-8 scroll-mt-20">
+        <div className="grid lg:grid-cols-2 gap-20 items-center">
+          <div>
+            <div className="inline-flex items-center gap-2 bg-secondary/10 px-4 py-1.5 rounded-full text-xs font-black mb-6 text-primary uppercase">
+              <Lightbulb size={16} className="text-primary" /> {t('why_use_title')}
+            </div>
+            <h2 className="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-8 leading-tight">Excelência na Gestão de Informação.</h2>
+            <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed mb-10">{t('why_text')}</p>
+            
+            <div className="space-y-6">
+              {[
+                { title: "Segurança de Dados", desc: "Protocolos de auditoria que registam cada alteração no sistema." },
+                { title: "Eficiência Operacional", desc: "Redução de 80% no uso de papel e processos burocráticos." },
+                { title: "Transparência", desc: "Pais acompanham o progresso dos filhos instantaneamente." }
+              ].map((adv, i) => (
+                <div key={i} className="flex gap-5">
+                  <div className="shrink-0 w-8 h-8 bg-primary/10 text-primary rounded-full flex items-center justify-center">
+                    <CheckCircle size={18} />
+                  </div>
+                  <div>
+                    <h4 className="font-black dark:text-white uppercase text-sm tracking-widest">{adv.title}</h4>
+                    <p className="text-slate-500 text-sm">{adv.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-6 pt-12">
+              <div className="bg-primary p-8 rounded-[2rem] text-white shadow-xl">
+                <p className="text-4xl font-black mb-2">94%</p>
+                <p className="text-sm font-bold opacity-70">Aumento de Assiduidade</p>
+              </div>
+              <div className="bg-slate-100 dark:bg-slate-800 p-8 rounded-[2rem] dark:text-white">
+                <p className="text-4xl font-black mb-2">+2k</p>
+                <p className="text-sm font-bold text-slate-500 uppercase">Utilizadores</p>
+              </div>
+            </div>
+            <div className="space-y-6">
+              <div className="bg-secondary p-8 rounded-[2rem] text-primary shadow-xl">
+                <p className="text-4xl font-black mb-2">100%</p>
+                <p className="text-sm font-bold opacity-70">Dados Seguros</p>
+              </div>
+              <div className="bg-primary p-8 rounded-[2rem] text-white">
+                <p className="text-4xl font-black mb-2">24/7</p>
+                <p className="text-sm font-bold opacity-70">Disponibilidade</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Localização & Contacto */}
+      <section id="location" className="py-24 bg-slate-50 dark:bg-slate-800/40 transition-colors scroll-mt-20">
+        <div className="max-w-7xl mx-auto px-8">
+          <div className="grid lg:grid-cols-12 gap-16">
+            <div className="lg:col-span-7">
+              <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-8">{t('find_us')}</h2>
+              <div className="h-[450px] w-full rounded-[3rem] overflow-hidden bg-slate-200 dark:bg-slate-700 shadow-2xl border-8 border-white dark:border-slate-800">
                 <iframe 
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3942.2351897648353!2d13.228531314785465!3d-8.82512349366224!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a51f1585093375b%3A0xc6d7a46e968686e0!2sIMEL%20-%20Instituto%20M%C3%A9dio%20de%20Economia%20de%20Luanda!5e0!3m2!1spt-BR!2sao!4v1690000000000!5m2!1spt-BR!2sao" 
                   width="100%" 
@@ -115,69 +193,80 @@ const LandingPage: React.FC = () => {
                   style={{ border: 0 }} 
                   allowFullScreen 
                   loading="lazy" 
-                  referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
               </div>
-            </div>
-            <div className="order-1 lg:order-2">
-              <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-6">{t('find_us')}</h2>
-              <p className="text-lg text-slate-600 dark:text-slate-400 mb-10 leading-relaxed">
-                Estamos localizados no coração de Luanda, prontos para receber nossos alunos e visitantes.
-              </p>
-              
-              <a 
-                href="https://www.google.com/maps/search/?api=1&query=56CW%2B38V,Luanda,Angola" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="group inline-flex items-center gap-6 p-8 bg-white dark:bg-slate-900 rounded-[2rem] shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all border border-slate-100 dark:border-slate-700"
-              >
-                <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/30 text-[#003366] dark:text-[#FFD700] rounded-2xl flex items-center justify-center shrink-0">
-                  <MapPin size={32} />
+              <div className="mt-8 flex items-center gap-6 p-6 bg-white dark:bg-slate-800 rounded-3xl shadow-sm">
+                <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
+                  <MapPin size={24} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-1">{t('location')}</h3>
-                  <p className="text-xl font-bold text-slate-800 dark:text-white">56CW+38V, Luanda</p>
-                  <p className="text-slate-500 dark:text-slate-400">Luanda, Angola</p>
+                  <p className="font-black dark:text-white uppercase tracking-widest text-sm">Sede Institucional</p>
+                  <p className="text-slate-500">Largo da Independência, Luanda, Angola</p>
                 </div>
-                <div className="ml-4 w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-[#003366] group-hover:text-white transition-all">
-                  <ArrowRight size={20} />
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section id="features" className="py-24">
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="text-center mb-20">
-            <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-4">Desenvolvido para Excelência Académica</h2>
-            <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">Nossa plataforma oferece ferramentas específicas para cada perfil da comunidade escolar, garantindo integração total.</p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { icon: ShieldCheck, title: "Segurança Total", desc: "Controle de acesso rigoroso com logs de atividade e backup automático." },
-              { icon: Users, title: "Multiperfil", desc: "Dashboards personalizados para Alunos, Pais, Professores e Gestores." },
-              { icon: Database, title: "Dados em Tempo Real", desc: "Notas, faltas e relatórios atualizados instantaneamente." }
-            ].map((f, i) => (
-              <div key={i} className="bg-white dark:bg-slate-800 p-10 rounded-[2rem] shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all group border border-slate-100 dark:border-slate-700">
-                <div className="w-14 h-14 bg-blue-50 dark:bg-blue-900/30 text-[#003366] dark:text-blue-300 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#003366] group-hover:text-white transition-colors">
-                  <f.icon size={28} />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4">{f.title}</h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{f.desc}</p>
               </div>
-            ))}
+            </div>
+
+            <div className="lg:col-span-5">
+              <div className="bg-white dark:bg-slate-800 p-10 md:p-14 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-700 sticky top-28">
+                <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-3">{t('contact_form_title')}</h3>
+                <p className="text-slate-500 mb-10 text-sm leading-relaxed">{t('contact_form_subtitle')}</p>
+
+                {formSent ? (
+                  <div className="text-center py-16 animate-fade">
+                    <div className="w-24 h-24 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-8">
+                      <CheckCircle size={48} />
+                    </div>
+                    <h4 className="text-2xl font-black mb-3 dark:text-white">Mensagem Enviada</h4>
+                    <p className="text-slate-500 italic">Obrigado pelo seu contacto. Brevemente entraremos em contacto através do e-mail fornecido.</p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleContactSubmit} className="space-y-6">
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-[0.2em]">{t('name_label')}</label>
+                      <input type="text" required placeholder="Nome Completo" className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-primary outline-none transition-all dark:text-white font-medium" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-[0.2em]">{t('email_label')}</label>
+                      <input type="email" required placeholder="exemplo@imel.edu.ao" className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-primary outline-none transition-all dark:text-white font-medium" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-[0.2em]">{t('message_label')}</label>
+                      <textarea required rows={4} placeholder="Como podemos ajudar?" className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-primary outline-none transition-all dark:text-white resize-none font-medium"></textarea>
+                    </div>
+                    <button type="submit" className="w-full bg-primary text-white py-5 rounded-2xl font-black text-lg shadow-xl hover:opacity-95 active:scale-95 transition-all flex items-center justify-center gap-4">
+                      {t('send_message_btn')} <Send size={22} />
+                    </button>
+                  </form>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-slate-100 dark:border-slate-800 text-center">
-        <p className="text-slate-500 dark:text-slate-400 text-sm">© 2026 Instituto Médio de Economia de Luanda. Todos os direitos reservados.</p>
-        <p className="text-slate-400 dark:text-slate-500 text-xs mt-2">Sistema de Gestão Interna v2.5.0</p>
+      <footer className="py-16 border-t border-slate-100 dark:border-slate-800 text-center bg-white dark:bg-slate-900">
+        <div className="flex flex-col items-center gap-6 max-w-7xl mx-auto px-8">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
+              < GraduationCap size={24} />
+            </div>
+            <span className="font-black text-2xl text-slate-900 dark:text-white">{settings.schoolAcronym}</span>
+          </div>
+          
+          <div className="flex flex-wrap justify-center gap-x-12 gap-y-4">
+            <Link to="/termos" className="text-sm font-bold text-slate-500 hover:text-primary transition-colors">Termos de Utilização</Link>
+            <Link to="/privacidade" className="text-sm font-bold text-slate-500 hover:text-primary transition-colors">Privacidade</Link>
+            <Link to="/suporte" className="text-sm font-bold text-slate-500 hover:text-primary transition-colors">Suporte Técnico</Link>
+            <a href="https://acessoetp.ao" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-500 hover:text-primary transition-colors">Portal Governamental</a>
+          </div>
+
+          <div className="pt-8 border-t border-slate-100 dark:border-slate-800 w-full">
+            <p className="text-slate-400 text-xs font-medium">
+              © {new Date().getFullYear()} {settings.schoolName}. <br className="sm:hidden" /> Todos os direitos reservados.
+            </p>
+          </div>
+        </div>
       </footer>
     </div>
   );

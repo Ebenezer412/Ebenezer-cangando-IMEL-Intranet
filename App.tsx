@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect, createContext, useContext, useMemo } from 'react';
 import { 
   HashRouter as Router, 
   Routes, 
@@ -7,8 +7,8 @@ import {
   Navigate, 
   Link
 } from 'react-router-dom';
-import { User, UserRole, Grade, ClassSchedule, LibraryResource, Message } from './types';
-import { TEST_USERS, MOCK_GRADES, MOCK_SCHEDULE } from './constants';
+import { User, UserRole, Grade, ClassSchedule, LibraryResource, Message, SystemSettings, AuditLog } from './types';
+import { TEST_USERS, MOCK_GRADES, MOCK_SCHEDULE, DEFAULT_PRIMARY_COLOR, DEFAULT_SECONDARY_COLOR } from './constants';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import CreateAccountPage from './pages/CreateAccountPage';
@@ -19,70 +19,63 @@ import GradingPage from './pages/GradingPage';
 import SchedulePage from './pages/SchedulePage';
 import LibraryPage from './pages/LibraryPage';
 import MessagesPage from './pages/MessagesPage';
+import BrandingPage from './pages/BrandingPage';
 import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
 
-// --- Placeholder Components for "Full Functionality" ---
-const HistoryPage = () => (
-  <div className="space-y-6 animate-fade">
-    <h1 className="text-3xl font-black text-slate-900 dark:text-white">Histórico Académico</h1>
-    <div className="grid gap-4">
-      {[2023, 2022, 2021].map(year => (
-        <div key={year} className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm flex justify-between items-center">
-          <div>
-            <p className="font-bold text-slate-800 dark:text-white">Ano Lectivo {year}</p>
-            <p className="text-sm text-slate-500">10ª Classe - Gestão Empresarial</p>
-          </div>
-          <span className="px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold uppercase">Aprovado</span>
-        </div>
-      ))}
-    </div>
-  </div>
-);
+import AcademicStatsPage from './pages/AcademicStatsPage';
+import TeacherMonitoringPage from './pages/TeacherMonitoringPage';
+import AuditLogsPage from './pages/AuditLogsPage';
+import InstitutionalPage from './pages/InstitutionalPage';
+import AttendancePage from './pages/AttendancePage';
 
-const StatsPage = () => (
-  <div className="space-y-6 animate-fade">
-    <h1 className="text-3xl font-black text-slate-900 dark:text-white">Estatísticas Institucionais</h1>
-    <div className="grid md:grid-cols-2 gap-8">
-      <div className="bg-white dark:bg-slate-800 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700 shadow-sm">
-        <h3 className="font-bold mb-4 dark:text-white">Aproveitamento por Curso</h3>
-        <div className="space-y-4">
-          {['Economia', 'Contabilidade', 'Gestão'].map(c => (
-            <div key={c}>
-              <div className="flex justify-between text-sm mb-1 dark:text-slate-300"><span>{c}</span><span>85%</span></div>
-              <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                <div className="h-full bg-[#003366]" style={{ width: '85%' }}></div>
-              </div>
+// Importação das novas páginas
+import TermsPage from './pages/TermsPage';
+import PrivacyPage from './pages/PrivacyPage';
+import SupportPage from './pages/SupportPage';
+
+const HistoryPage = () => {
+  const { activeStudent } = useAuth();
+  return (
+    <div className="space-y-6 animate-fade">
+      <h1 className="text-3xl font-black text-slate-900 dark:text-white">Histórico Académico {activeStudent ? `- ${activeStudent.name}` : ''}</h1>
+      <div className="grid gap-4">
+        {[2023, 2022, 2021].map(year => (
+          <div key={year} className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm flex justify-between items-center">
+            <div>
+              <p className="font-bold text-slate-800 dark:text-white">Ano Lectivo: {year}</p>
+              <p className="text-sm text-slate-500">{year === 2023 ? '11ª Classe' : year === 2022 ? '10ª Classe' : '9ª Classe'}</p>
             </div>
-          ))}
-        </div>
+            <span className="px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold uppercase">Aprovado</span>
+          </div>
+        ))}
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const SettingsPage = () => {
   const { toggleTheme, toggleLang, theme, lang } = useSettings();
   return (
     <div className="max-w-2xl space-y-8 animate-fade">
-      <h1 className="text-3xl font-black text-slate-900 dark:text-white">Configurações</h1>
+      <h1 className="text-3xl font-black text-slate-900 dark:text-white">Configurações de Utilizador</h1>
       <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-100 dark:border-slate-700 overflow-hidden shadow-sm">
         <div className="p-8 space-y-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="font-bold dark:text-white">Modo Escuro</p>
-              <p className="text-sm text-slate-500">Alternar entre tema claro e escuro</p>
+              <p className="text-sm text-slate-500">Alternar visualização para ambientes com pouca luz.</p>
             </div>
-            <button onClick={toggleTheme} className={`w-14 h-8 rounded-full p-1 transition-colors ${theme === 'dark' ? 'bg-[#003366]' : 'bg-slate-200'}`}>
+            <button onClick={toggleTheme} className={`w-14 h-8 rounded-full p-1 transition-colors ${theme === 'dark' ? 'bg-primary' : 'bg-slate-200'}`}>
               <div className={`w-6 h-6 bg-white rounded-full transition-transform ${theme === 'dark' ? 'translate-x-6' : ''}`}></div>
             </button>
           </div>
           <div className="flex items-center justify-between border-t border-slate-50 dark:border-slate-700 pt-6">
             <div>
               <p className="font-bold dark:text-white">Idioma do Sistema</p>
-              <p className="text-sm text-slate-500">Actualmente em {lang === 'pt' ? 'Português' : 'Inglês'}</p>
+              <p className="text-sm text-slate-500">Alterar idioma global da plataforma.</p>
             </div>
-            <button onClick={toggleLang} className="px-4 py-2 bg-slate-100 dark:bg-slate-700 rounded-xl font-bold text-sm dark:text-white">Mudar para {lang === 'pt' ? 'EN' : 'PT'}</button>
+            <button onClick={toggleLang} className="px-4 py-2 bg-slate-100 dark:bg-slate-700 rounded-xl font-bold text-sm dark:text-white">Mudar para {lang === 'pt' ? 'Inglês' : 'Português'}</button>
           </div>
         </div>
       </div>
@@ -90,105 +83,97 @@ const SettingsPage = () => {
   );
 };
 
-// --- Translations ---
 export const translations = {
   pt: {
-    dashboard: "Dashboard",
+    dashboard_student: "Painel do Aluno",
+    dashboard_teacher: "Painel Docente",
+    dashboard_guardian: "Portal do Encarregado",
+    dashboard_director: "Direcção Geral",
+    dashboard_admin: "Administração",
     my_grades: "Minhas Notas",
-    schedule: "Horário Escolar",
-    library: "Biblioteca Digital",
-    history: "Histórico Académico",
-    user_management: "Gestão de Usuários",
-    monitoring: "Monitoramento",
-    stats: "Estatísticas",
-    reports: "Relatórios Gerenciais",
-    messages: "Mensagens",
-    settings: "Configurações",
+    guardian_grades: "Notas do Educando",
+    my_attendance: "Minha Assiduidade",
+    guardian_attendance: "Faltas do Educando",
+    my_schedule: "Horário de Aulas",
+    guardian_schedule: "Horário Escolar",
+    my_resources: "Recursos Didácticos",
+    guardian_resources: "Materiais de Apoio",
+    my_history: "Histórico Escolar",
+    guardian_history: "Percurso Académico",
+    grading_sheet: "Pauta de Avaliação",
+    teacher_schedule: "Horário Docente",
+    content_mgmt: "Gestão de Conteúdos",
+    academic_analysis: "Análise Estatística",
+    pedagogic_control: "Controlo Pedagógico",
+    enrollment_mgmt: "Gestão de Alunos",
+    inst_structure: "Estrutura Escolar",
+    mgmt_maps: "Mapas de Gestão",
+    security_logs: "Registos de Auditoria",
+    access_accounts: "Contas de Acesso",
+    visual_id: "Identidade Visual",
+    sys_audit: "Auditoria do Sistema",
+    communication: "Comunicação",
+    config: "Configurações",
     logout: "Sair do Sistema",
-    welcome: "Olá",
+    welcome: "Bem-vindo",
     search: "Pesquisar...",
-    academic_perf: "Meu Desempenho Académico",
-    institutional_summary: "Resumo Institucional IMEL",
-    login_title: "Bem-vindo de volta",
-    login_subtitle: "Insira suas credenciais para aceder ao sistema.",
+    login_btn: "LOGIN",
+    login_title: "Acesso ao Sistema",
+    login_subtitle: "Insira as suas credenciais para aceder ao Intra IMEL.",
     process_number: "Número de Processo",
     password: "Palavra-passe",
-    forgot_password: "Esqueceu a senha?",
-    access_btn: "Entrar no Sistema",
-    no_account: "Não tem uma conta ativa?",
-    create_now: "Criar conta agora",
-    location: "Localização",
-    find_us: "Encontre-nos",
-    address: "56CW+38V, Luanda, Angola",
+    forgot_password: "Esqueci a minha senha",
+    create_account: "Não tem conta? Criar conta",
+    start_now: "Aceder à Plataforma",
     features: "Funcionalidades",
-    about: "Sobre o IMEL",
-    start_now: "Começar agora",
-    demo: "Ver Demonstração",
-    save: "Salvar Alterações",
-    cancel: "Cancelar"
-  },
-  en: {
-    dashboard: "Dashboard",
-    my_grades: "My Grades",
-    schedule: "Class Schedule",
-    library: "Digital Library",
-    history: "Academic History",
-    user_management: "User Management",
-    monitoring: "Monitoring",
-    stats: "Statistics",
-    reports: "Management Reports",
-    messages: "Messages",
-    settings: "Settings",
-    logout: "Logout",
-    welcome: "Hello",
-    search: "Search...",
-    academic_perf: "My Academic Performance",
-    institutional_summary: "IMEL Institutional Summary",
-    login_title: "Welcome Back",
-    login_subtitle: "Enter your credentials to access the system.",
-    process_number: "Process Number",
-    password: "Password",
-    forgot_password: "Forgot password?",
-    access_btn: "Login to System",
-    no_account: "Don't have an account?",
-    create_now: "Create account now",
-    location: "Location",
-    find_us: "Find Us",
-    address: "56CW+38V, Luanda, Angola",
-    features: "Features",
-    about: "About IMEL",
-    start_now: "Start now",
-    demo: "View Demo",
-    save: "Save Changes",
-    cancel: "Cancel"
+    location: "Localização",
+    find_us: "Onde Estamos",
+    demo: "Visão Geral",
+    contact_form_title: "Contacte-nos",
+    contact_form_subtitle: "Para questões técnicas ou administrativas, envie-nos uma mensagem.",
+    name_label: "Nome Completo",
+    email_label: "Endereço de E-mail",
+    message_label: "Assunto / Mensagem",
+    send_message_btn: "ENVIAR MENSAGEM",
+    advantages_title: "Vantagens do Intra IMEL",
+    why_use_title: "Porquê utilizar o sistema?",
+    advantage_1: "Centralização de Dados",
+    advantage_2: "Comunicação Directa",
+    advantage_3: "Monitoramento em Tempo Real",
+    why_text: "O Intra IMEL foi desenvolvido para modernizar a gestão escolar do IMEL, promovendo a transparência e eficiência entre alunos, encarregados, professores e direcção. Com uma interface profissional e intuitiva, garantimos que todas as informações académicas estejam à distância de um clique."
   }
 };
 
-// --- Settings Context ---
 interface SettingsContextType {
   theme: 'light' | 'dark';
   lang: 'pt' | 'en';
   toggleTheme: () => void;
   toggleLang: () => void;
-  t: (key: keyof typeof translations.pt) => string;
+  t: (key: string) => string;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
-export const useSettings = () => {
-  const context = useContext(SettingsContext);
-  if (!context) throw new Error('useSettings must be used within SettingsProvider');
-  return context;
-};
+export const useSettings = () => useContext(SettingsContext)!;
 
-// --- Database Context ---
+interface SystemAdminContextType {
+  settings: SystemSettings;
+  updateSettings: (newSettings: Partial<SystemSettings>) => void;
+}
+
+const SystemAdminContext = createContext<SystemAdminContextType | undefined>(undefined);
+export const useSystemAdmin = () => useContext(SystemAdminContext)!;
+
 interface DatabaseContextType {
   users: User[];
   grades: Grade[];
   schedules: ClassSchedule[];
   library: LibraryResource[];
   messages: Message[];
-  updateGrade: (id: string, updates: Partial<Grade>) => void;
-  deleteUser: (id: string) => void;
+  auditLogs: AuditLog[];
+  updateGrade: (id: string, updates: Partial<Grade>, updatedBy: string) => void;
+  addUser: (user: Omit<User, 'id'>, createdBy: string) => void;
+  updateUser: (id: string, updates: Partial<User>, updatedBy: string) => void;
+  deleteUser: (id: string, deletedBy: string) => void;
   sendMessage: (to: string, content: string) => void;
 }
 
@@ -198,6 +183,7 @@ export const useDatabase = () => useContext(DatabaseContext)!;
 const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [users, setUsers] = useState<User[]>(() => JSON.parse(localStorage.getItem('imel_db_users') || JSON.stringify(TEST_USERS)));
   const [grades, setGrades] = useState<Grade[]>(() => JSON.parse(localStorage.getItem('imel_db_grades') || JSON.stringify(MOCK_GRADES)));
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>(() => JSON.parse(localStorage.getItem('imel_db_logs') || '[]'));
   const [schedules] = useState<ClassSchedule[]>(MOCK_SCHEDULE);
   const [library] = useState<LibraryResource[]>([
     { id: 'l1', title: 'Introdução à Macroeconomia', subject: 'Economia', author: 'Dr. Santos', date: '2024-05-10', type: 'PDF' },
@@ -209,20 +195,50 @@ const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children })
   useEffect(() => {
     localStorage.setItem('imel_db_users', JSON.stringify(users));
     localStorage.setItem('imel_db_grades', JSON.stringify(grades));
-  }, [users, grades]);
+    localStorage.setItem('imel_db_logs', JSON.stringify(auditLogs));
+  }, [users, grades, auditLogs]);
 
-  const updateGrade = (id: string, updates: Partial<Grade>) => {
+  const addLog = (user: string, action: string, target: string, details: string) => {
+    const newLog: AuditLog = {
+      id: Date.now().toString(),
+      user, action, target, details,
+      timestamp: new Date().toLocaleString()
+    };
+    setAuditLogs(prev => [newLog, ...prev].slice(0, 100));
+  };
+
+  const updateGrade = (id: string, updates: Partial<Grade>, updatedBy: string) => {
     setGrades(prev => prev.map(g => {
       if (g.id === id) {
-        const updated = { ...g, ...updates };
-        updated.average = Math.round(((updated.mac + updated.npp + updated.npt) / 3) * 10) / 10;
+        const updated = { ...g, ...updates, updatedAt: new Date().toLocaleDateString(), updatedBy };
+        const mac = updated.mac ?? 0;
+        const npp = updated.npp ?? 0;
+        const npt = updated.npt ?? 0;
+        updated.average = Number(((mac + npp + npt) / 3).toFixed(1));
+        addLog(updatedBy, 'ALTEROU_NOTA', updated.studentName, `Nota de ${updated.subject} alterada.`);
         return updated;
       }
       return g;
     }));
   };
 
-  const deleteUser = (id: string) => setUsers(prev => prev.filter(u => u.id !== id));
+  const addUser = (userData: Omit<User, 'id'>, createdBy: string) => {
+    const newUser: User = { ...userData, id: Date.now().toString() };
+    setUsers(prev => [...prev, newUser]);
+    addLog(createdBy, 'CRIOU_USUARIO', newUser.name, `Usuário ${newUser.role} adicionado.`);
+  };
+
+  const updateUser = (id: string, updates: Partial<User>, updatedBy: string) => {
+    setUsers(prev => prev.map(u => u.id === id ? { ...u, ...updates } : u));
+    const target = users.find(u => u.id === id)?.name || 'Desconhecido';
+    addLog(updatedBy, 'EDITOU_USUARIO', target, `Perfil de usuário atualizado.`);
+  };
+
+  const deleteUser = (id: string, deletedBy: string) => {
+    const target = users.find(u => u.id === id)?.name || 'Desconhecido';
+    setUsers(prev => prev.filter(u => u.id !== id));
+    addLog(deletedBy, 'REMOVEU_USUARIO', target, `Usuário removido permanentemente.`);
+  };
   
   const sendMessage = (to: string, content: string) => {
     const user = JSON.parse(localStorage.getItem('imel_user') || '{}');
@@ -238,7 +254,7 @@ const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children })
   };
 
   return (
-    <DatabaseContext.Provider value={{ users, grades, schedules, library, messages, updateGrade, deleteUser, sendMessage }}>
+    <DatabaseContext.Provider value={{ users, grades, schedules, library, messages, auditLogs, updateGrade, addUser, updateUser, deleteUser, sendMessage }}>
       {children}
     </DatabaseContext.Provider>
   );
@@ -247,6 +263,8 @@ const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children })
 // --- Auth Context ---
 interface AuthContextType {
   user: User | null;
+  activeStudent: User | null;
+  setActiveStudentId: (id: string) => void;
   login: (process: string, pass: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
@@ -257,20 +275,34 @@ export const useAuth = () => useContext(AuthContext)!;
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [activeStudentId, setActiveStudentId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { users } = useDatabase();
 
   useEffect(() => {
     const saved = localStorage.getItem('imel_user');
-    if (saved) setUser(JSON.parse(saved));
+    if (saved) {
+      const parsedUser = JSON.parse(saved);
+      setUser(parsedUser);
+      if (parsedUser.role === UserRole.ENCARREGADO && parsedUser.studentIds?.length > 0) {
+        setActiveStudentId(parsedUser.studentIds[0]);
+      } else if (parsedUser.role === UserRole.ALUNO) {
+        setActiveStudentId(parsedUser.id);
+      }
+    }
     setIsLoading(false);
   }, []);
 
   const login = async (process: string, pass: string) => {
-    const savedUsers = JSON.parse(localStorage.getItem('imel_db_users') || '[]');
-    const found = savedUsers.find((u: any) => u.processNumber === process);
+    const found = users.find((u: any) => u.processNumber === process);
     if (found) {
       setUser(found);
       localStorage.setItem('imel_user', JSON.stringify(found));
+      if (found.role === UserRole.ENCARREGADO && found.studentIds?.length > 0) {
+        setActiveStudentId(found.studentIds[0]);
+      } else if (found.role === UserRole.ALUNO) {
+        setActiveStudentId(found.id);
+      }
       return true;
     }
     return false;
@@ -278,10 +310,16 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
   const logout = () => {
     setUser(null);
+    setActiveStudentId(null);
     localStorage.removeItem('imel_user');
   };
 
-  return <AuthContext.Provider value={{ user, login, logout, isLoading }}>{children}</AuthContext.Provider>;
+  const activeStudent = useMemo(() => {
+    if (!activeStudentId) return null;
+    return users.find(u => u.id === activeStudentId) || null;
+  }, [activeStudentId, users]);
+
+  return <AuthContext.Provider value={{ user, activeStudent, setActiveStudentId, login, logout, isLoading }}>{children}</AuthContext.Provider>;
 };
 
 const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -295,9 +333,39 @@ const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children })
 
   const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
   const toggleLang = () => setLang(prev => prev === 'pt' ? 'en' : 'pt');
-  const t = (key: keyof typeof translations.pt) => translations[lang][key] || key;
+  const t = (key: string) => (translations['pt'] as any)[key] || key;
 
   return <SettingsContext.Provider value={{ theme, lang, toggleTheme, toggleLang, t }}>{children}</SettingsContext.Provider>;
+};
+
+const SystemAdminProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [settings, setSettings] = useState<SystemSettings>(() => {
+    const saved = localStorage.getItem('imel_system_settings');
+    if (saved) return JSON.parse(saved);
+    return {
+      schoolName: 'Instituto Médio de Economia de Luanda',
+      schoolAcronym: 'Intra IMEL',
+      primaryColor: DEFAULT_PRIMARY_COLOR,
+      secondaryColor: DEFAULT_SECONDARY_COLOR,
+      version: '2.5.0'
+    };
+  });
+
+  useEffect(() => {
+    localStorage.setItem('imel_system_settings', JSON.stringify(settings));
+    document.documentElement.style.setProperty('--primary-color', settings.primaryColor);
+    document.documentElement.style.setProperty('--secondary-color', settings.secondaryColor);
+  }, [settings]);
+
+  const updateSettings = (newSettings: Partial<SystemSettings>) => {
+    setSettings(prev => ({ ...prev, ...newSettings }));
+  };
+
+  return (
+    <SystemAdminContext.Provider value={{ settings, updateSettings }}>
+      {children}
+    </SystemAdminContext.Provider>
+  );
 };
 
 const AppShell: React.FC = () => {
@@ -315,14 +383,23 @@ const AppShell: React.FC = () => {
           <Routes>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/notas" element={<GradesPage />} />
+            <Route path="/frequencia" element={<AttendancePage />} />
             <Route path="/gestao-notas" element={<GradingPage />} />
             <Route path="/horario" element={<SchedulePage />} />
             <Route path="/biblioteca" element={<LibraryPage />} />
             <Route path="/mensagens" element={<MessagesPage />} />
             <Route path="/historico" element={<HistoryPage />} />
-            <Route path="/stats" element={<StatsPage />} />
+            <Route path="/stats" element={<AcademicStatsPage />} />
+            <Route path="/direcao/professores" element={<TeacherMonitoringPage />} />
+            <Route path="/direcao/alunos" element={<UserManagementPage mode="alunos" />} />
+            <Route path="/direcao/auditoria" element={<AuditLogsPage />} />
+            <Route path="/direcao/institucional" element={<InstitutionalPage />} />
             <Route path="/config" element={<SettingsPage />} />
             <Route path="/admin/usuarios" element={<UserManagementPage />} />
+            <Route path="/admin/branding" element={<BrandingPage />} />
+            <Route path="/termos" element={<TermsPage />} />
+            <Route path="/privacidade" element={<PrivacyPage />} />
+            <Route path="/suporte" element={<SupportPage />} />
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>
         </main>
@@ -332,20 +409,25 @@ const AppShell: React.FC = () => {
 };
 
 const App: React.FC = () => (
-  <SettingsProvider>
-    <DatabaseProvider>
-      <AuthProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/registrar" element={<CreateAccountPage />} />
-            <Route path="/*" element={<AppShell />} />
-          </Routes>
-        </Router>
-      </AuthProvider>
-    </DatabaseProvider>
-  </SettingsProvider>
+  <SystemAdminProvider>
+    <SettingsProvider>
+      <DatabaseProvider>
+        <AuthProvider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/registrar" element={<CreateAccountPage />} />
+              <Route path="/termos" element={<TermsPage />} />
+              <Route path="/privacidade" element={<PrivacyPage />} />
+              <Route path="/suporte" element={<SupportPage />} />
+              <Route path="/*" element={<AppShell />} />
+            </Routes>
+          </Router>
+        </AuthProvider>
+      </DatabaseProvider>
+    </SettingsProvider>
+  </SystemAdminProvider>
 );
 
 export default App;

@@ -10,11 +10,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #003366;
+            --secondary-color: #FFD700;
+        }
         body { font-family: 'Inter', sans-serif; }
         .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
-        .sidebar-item-active { background: rgba(255, 255, 255, 0.1); border-left: 4px solid #FFD700; }
+        .sidebar-item-active { background: rgba(255, 255, 255, 0.1); border-left: 4px solid var(--secondary-color); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade { animation: fadeIn 0.5s ease-out forwards; }
+        
+        /* Custom Tailwind classes using CSS variables */
+        .bg-primary { background-color: var(--primary-color); }
+        .bg-secondary { background-color: var(--secondary-color); }
+        .text-primary { color: var(--primary-color); }
+        .text-secondary { color: var(--secondary-color); }
+        .border-primary { border-color: var(--primary-color); }
+        .border-secondary { border-color: var(--secondary-color); }
     </style>
 <script type="importmap">
 {
