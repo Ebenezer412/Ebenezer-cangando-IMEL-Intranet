@@ -1,0 +1,7 @@
+{
+  "name": "IMEL Intranet",
+  "description": "Sistema de Gestão Escolar Interno (SIG) completo para o Instituto Médio de Economia de Luanda, focado em alunos, professores, administração e encarregados.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
