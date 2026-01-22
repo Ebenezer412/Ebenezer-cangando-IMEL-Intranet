@@ -89,7 +89,6 @@ export interface SystemSettings {
   version: string;
 }
 
-// Added missing ClassSchedule interface
 export interface ClassSchedule {
   id: string;
   day: string;
@@ -100,7 +99,6 @@ export interface ClassSchedule {
   teacherId: string;
 }
 
-// Added missing AuditLog interface
 export interface AuditLog {
   id: string;
   user: string;
@@ -108,4 +106,10 @@ export interface AuditLog {
   target: string;
   details: string;
   timestamp: string;
+}
+
+export interface AIInsight {
+  title: string;
+  content: string;
+  severity: 'low' | 'medium' | 'high';
 }

@@ -2,7 +2,7 @@
 import { 
   LayoutDashboard, Users, ClipboardList, Calendar, FileText, MessageSquare, 
   Settings, BarChart3, Library, History, Palette, Eye, Activity, Briefcase, 
-  FileBarChart, BookMarked, Clock, BookOpen, Bell, ShieldAlert, Zap, Globe
+  FileBarChart, BookMarked, Clock, BookOpen, Bell, ShieldAlert, Zap, Globe, FileStack
 } from 'lucide-react';
 import { UserRole, SidebarItem, Grade, ClassSchedule, User } from './types';
 
@@ -42,7 +42,7 @@ export const TEST_USERS: User[] = [
 ];
 
 export const SIDEBAR_LINKS: SidebarItem[] = [
-  // Links Comuns & Aluno
+  // Aluno
   { icon: LayoutDashboard, label: 'Painel do Aluno', path: '/dashboard', roles: [UserRole.ALUNO] },
   { icon: FileText, label: 'Minhas Notas', path: '/notas', roles: [UserRole.ALUNO] },
   { icon: Clock, label: 'Minha Assiduidade', path: '/frequencia', roles: [UserRole.ALUNO] },
@@ -56,15 +56,16 @@ export const SIDEBAR_LINKS: SidebarItem[] = [
   { icon: LayoutDashboard, label: 'Portal do Encarregado', path: '/dashboard', roles: [UserRole.ENCARREGADO] },
   { icon: FileText, label: 'Notas do Educando', path: '/notas', roles: [UserRole.ENCARREGADO] },
   
-  // DIRETOR GERAL (Foco Estratégico)
+  // DIRETOR GERAL
   { icon: LayoutDashboard, label: 'Gabinete Estratégico', path: '/dashboard', roles: [UserRole.DIRETOR] },
   { icon: BarChart3, label: 'Análise de Desempenho', path: '/stats', roles: [UserRole.DIRETOR] },
   { icon: Activity, label: 'Controlo Pedagógico', path: '/direcao/professores', roles: [UserRole.DIRETOR] },
   { icon: Users, label: 'Gestão de Matrículas', path: '/direcao/alunos', roles: [UserRole.DIRETOR] },
   { icon: Globe, label: 'Estrutura Escolar', path: '/direcao/institucional', roles: [UserRole.DIRETOR] },
+  { icon: FileStack, label: 'Mapas Gerenciais', path: '/direcao/relatorios', roles: [UserRole.DIRETOR] },
   { icon: ShieldAlert, label: 'Logs de Segurança', path: '/direcao/auditoria', roles: [UserRole.DIRETOR, UserRole.ADMIN] },
 
-  // ADMINISTRADOR (Foco Infraestrutura)
+  // ADMINISTRADOR
   { icon: Zap, label: 'Consola de Gestão', path: '/dashboard', roles: [UserRole.ADMIN] },
   { icon: Users, label: 'Contas de Acesso', path: '/admin/usuarios', roles: [UserRole.ADMIN] },
   { icon: Palette, label: 'Identidade Visual', path: '/admin/branding', roles: [UserRole.ADMIN] },

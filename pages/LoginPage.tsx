@@ -75,7 +75,7 @@ const LoginPage: React.FC = () => {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider">{t('password')}</label>
-                <a href="#" className="text-xs font-bold text-primary dark:text-secondary hover:underline">Esqueceu a senha?</a>
+                <Link to="/recuperar-senha" title="Recuperar Senha" className="text-xs font-bold text-primary dark:text-secondary hover:underline">Esqueceu a senha?</Link>
               </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">

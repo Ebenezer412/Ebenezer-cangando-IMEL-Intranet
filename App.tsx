@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, createContext, useContext, useMemo } from 'react';
 import { 
   HashRouter as Router, 
@@ -12,6 +11,7 @@ import { TEST_USERS, MOCK_GRADES, MOCK_SCHEDULE, DEFAULT_PRIMARY_COLOR, DEFAULT_
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import CreateAccountPage from './pages/CreateAccountPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import DashboardPage from './pages/DashboardPage';
 import UserManagementPage from './pages/UserManagementPage';
 import GradesPage from './pages/GradesPage';
@@ -58,7 +58,6 @@ export const useDatabase = () => useContext(DatabaseContext)!;
 const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [users, setUsers] = useState<User[]>(() => JSON.parse(localStorage.getItem('imel_db_users') || JSON.stringify(TEST_USERS)));
   const [grades, setGrades] = useState<Grade[]>(() => JSON.parse(localStorage.getItem('imel_db_grades') || JSON.stringify(MOCK_GRADES)));
-  // Fixed: Added schedules state
   const [schedules, setSchedules] = useState<ClassSchedule[]>(() => JSON.parse(localStorage.getItem('imel_db_schedules') || JSON.stringify(MOCK_SCHEDULE)));
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(() => JSON.parse(localStorage.getItem('imel_db_logs') || '[]'));
   const [notifications, setNotifications] = useState<Notification[]>(() => JSON.parse(localStorage.getItem('imel_db_notifs') || '[]'));
@@ -71,7 +70,6 @@ const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children })
   useEffect(() => {
     localStorage.setItem('imel_db_users', JSON.stringify(users));
     localStorage.setItem('imel_db_grades', JSON.stringify(grades));
-    // Fixed: Saving schedules to localStorage
     localStorage.setItem('imel_db_schedules', JSON.stringify(schedules));
     localStorage.setItem('imel_db_logs', JSON.stringify(auditLogs));
     localStorage.setItem('imel_db_notifs', JSON.stringify(notifications));
@@ -99,30 +97,17 @@ const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children })
       date: new Date().toLocaleDateString()
     };
     setLibrary(prev => [newRes, ...prev]);
-    addNotification({
-      title: 'Novo Material Didático',
-      message: `${resource.author} carregou "${resource.title}" para ${resource.subject}.`,
-      type: 'announcement'
-    });
   };
 
   const updateGrade = (id: string, updates: any, updatedBy: string) => {
     setGrades(prev => prev.map(g => {
       if (g.id === id) {
-        const updated = { ...g, ...updates, updatedAt: new Date().toLocaleDateString(), updatedBy };
-        // Lógica de recálculo simplificada para trimestres se necessário
-        addNotification({
-          title: 'Notas Atualizadas',
-          message: `O professor ${updatedBy} atualizou as notas de ${updated.subject}.`,
-          type: 'grade'
-        });
-        return updated;
+        return { ...g, ...updates, updatedAt: new Date().toLocaleDateString(), updatedBy };
       }
       return g;
     }));
   };
 
-  // Funções administrativas...
   const addUser = (userData: Omit<User, 'id'>, createdBy: string) => setUsers(prev => [...prev, { ...userData, id: Date.now().toString() }]);
   const updateUser = (id: string, updates: Partial<User>, updatedBy: string) => setUsers(prev => prev.map(u => u.id === id ? { ...u, ...updates } : u));
   const deleteUser = (id: string, deletedBy: string) => setUsers(prev => prev.filter(u => u.id !== id));
@@ -133,7 +118,6 @@ const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children })
       id: Date.now().toString(), from: user.name || 'Sistema', to, content, timestamp: new Date().toLocaleTimeString(), read: false
     };
     setMessages(prev => [newMessage, ...prev]);
-    addNotification({ title: 'Nova Mensagem', message: `Você recebeu uma mensagem de ${user.name}.`, type: 'message' });
   };
 
   return (
@@ -147,7 +131,7 @@ const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children })
   );
 };
 
-// --- Outros Contextos (Settings, Auth, SystemAdmin) mantidos como antes ---
+// --- Auth & Settings Contexts ---
 
 interface AuthContextType {
   user: User | null;
@@ -200,12 +184,24 @@ const SettingsContext = createContext<any>(undefined);
 export const useSettings = () => useContext(SettingsContext)!;
 const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => (localStorage.getItem('imel_theme') as any) || 'light');
+  // Initialize lang and toggleLang to support Topbar implementation and avoid crashes
   const [lang, setLang] = useState<'pt' | 'en'>(() => (localStorage.getItem('imel_lang') as any) || 'pt');
-  useEffect(() => { document.documentElement.classList.toggle('dark', theme === 'dark'); localStorage.setItem('imel_theme', theme); }, [theme]);
+  
+  useEffect(() => { 
+    document.documentElement.classList.toggle('dark', theme === 'dark'); 
+    localStorage.setItem('imel_theme', theme); 
+  }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem('imel_lang', lang);
+  }, [lang]);
+
   const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
   const toggleLang = () => setLang(prev => prev === 'pt' ? 'en' : 'pt');
+  
   const t = (key: string) => (translations['pt'] as any)[key] || key;
-  return <SettingsContext.Provider value={{ theme, lang, toggleTheme, toggleLang, t }}>{children}</SettingsContext.Provider>;
+  // Providing full state required by useSettings consumers like Topbar.tsx
+  return <SettingsContext.Provider value={{ theme, toggleTheme, lang, toggleLang, t }}>{children}</SettingsContext.Provider>;
 };
 
 const SystemAdminContext = createContext<any>(undefined);
@@ -214,62 +210,13 @@ const SystemAdminProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [settings, setSettings] = useState<SystemSettings>(() => {
     const saved = localStorage.getItem('imel_system_settings');
     if (saved) return JSON.parse(saved);
-    return { schoolName: 'Instituto Médio de Economia de Luanda', schoolAcronym: 'Intra IMEL', primaryColor: DEFAULT_PRIMARY_COLOR, secondaryColor: DEFAULT_SECONDARY_COLOR, version: '2.5.0' };
+    return { schoolName: 'Instituto Médio de Economia de Luanda', schoolAcronym: 'Intra IMEL', primaryColor: DEFAULT_PRIMARY_COLOR, secondaryColor: DEFAULT_SECONDARY_COLOR, version: '3.0.0-AI' };
   });
-  useEffect(() => { localStorage.setItem('imel_system_settings', JSON.stringify(settings)); document.documentElement.style.setProperty('--primary-color', settings.primaryColor); document.documentElement.style.setProperty('--secondary-color', settings.secondaryColor); }, [settings]);
+  useEffect(() => { localStorage.setItem('imel_system_settings', JSON.stringify(settings)); }, [settings]);
   return <SystemAdminContext.Provider value={{ settings, updateSettings: (n: any) => setSettings(p => ({ ...p, ...n })) }}>{children}</SystemAdminContext.Provider>;
 };
 
-// --- Páginas Adicionais (Histórico) ---
-
-const HistoryPage = () => {
-  const { activeStudent } = useAuth();
-  const academicHistory = [
-    { year: 2024, level: '12ª Classe (Inf. Gestão)', status: 'A decorrer', details: 'Frequência regular.', color: 'bg-blue-50 text-blue-600' },
-    { year: 2023, level: '11ª Classe (Inf. Gestão)', status: 'Aprovado (2 Deficiências)', details: 'Cadeiras: TLP e Matemática.', color: 'bg-orange-50 text-orange-600' },
-    { year: 2022, level: '10ª Classe (Inf. Gestão)', status: 'Aprovado', details: 'Aprovado em todas.', color: 'bg-emerald-50 text-emerald-600' }
-  ];
-  return (
-    <div className="space-y-6 animate-fade">
-      <h1 className="text-3xl font-black text-slate-900 dark:text-white">Percurso Académico {activeStudent?.name}</h1>
-      <div className="grid gap-4">
-        {academicHistory.map(item => (
-          <div key={item.year} className="bg-white dark:bg-slate-800 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700 shadow-sm flex flex-col md:flex-row justify-between items-center group gap-4">
-            <div className="flex items-center gap-6">
-              <div className="text-center bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl min-w-[100px]">
-                <p className="text-[10px] font-black text-slate-400 uppercase">Ano</p>
-                <p className="text-2xl font-black text-slate-900 dark:text-white">{item.year}</p>
-              </div>
-              <div><p className="font-black text-lg text-slate-800 dark:text-white">{item.level}</p><p className="text-sm text-slate-500">{item.details}</p></div>
-            </div>
-            <span className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest ${item.color}`}>{item.status}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const SettingsPage = () => {
-  const { toggleTheme, toggleLang, theme, lang } = useSettings();
-  return (
-    <div className="max-w-2xl space-y-8 animate-fade">
-      <h1 className="text-3xl font-black text-slate-900 dark:text-white">Configurações</h1>
-      <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-100 dark:border-slate-700 p-8 space-y-6">
-        <div className="flex items-center justify-between">
-          <div><p className="font-bold dark:text-white">Modo Escuro</p><p className="text-sm text-slate-500">Alternar visualização.</p></div>
-          <button onClick={toggleTheme} className={`w-14 h-8 rounded-full p-1 transition-colors ${theme === 'dark' ? 'bg-primary' : 'bg-slate-200'}`}><div className={`w-6 h-6 bg-white rounded-full transition-transform ${theme === 'dark' ? 'translate-x-6' : ''}`}></div></button>
-        </div>
-        <div className="flex items-center justify-between border-t border-slate-50 dark:border-slate-700 pt-6">
-          <div><p className="font-bold dark:text-white">Notificações Académicas</p><p className="text-sm text-slate-500">Receber alertas de novas notas.</p></div>
-          <button className="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl font-bold text-xs uppercase">Ativado</button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// --- App Principal ---
+// --- App Shell ---
 
 const AppShell: React.FC = () => {
   const { user } = useAuth();
@@ -289,17 +236,15 @@ const AppShell: React.FC = () => {
             <Route path="/horario" element={<SchedulePage />} />
             <Route path="/biblioteca" element={<LibraryPage />} />
             <Route path="/mensagens" element={<MessagesPage />} />
-            <Route path="/historico" element={<HistoryPage />} />
             <Route path="/stats" element={<AcademicStatsPage />} />
             <Route path="/direcao/professores" element={<TeacherMonitoringPage />} />
             <Route path="/direcao/alunos" element={<UserManagementPage mode="alunos" />} />
             <Route path="/direcao/auditoria" element={<AuditLogsPage />} />
             <Route path="/direcao/institucional" element={<InstitutionalPage />} />
-            <Route path="/config" element={<SettingsPage />} />
+            <Route path="/direcao/relatorios" element={<AcademicStatsPage />} />
             <Route path="/admin/usuarios" element={<UserManagementPage />} />
             <Route path="/admin/branding" element={<BrandingPage />} />
-            <Route path="/termos" element={<TermsPage />} />
-            <Route path="/privacidade" element={<PrivacyPage />} />
+            <Route path="/config" element={<BrandingPage />} />
             <Route path="/suporte" element={<SupportPage />} />
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>
@@ -318,6 +263,7 @@ const App: React.FC = () => (
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/recuperar-senha" element={<ForgotPasswordPage />} />
               <Route path="/registrar" element={<CreateAccountPage />} />
               <Route path="/termos" element={<TermsPage />} />
               <Route path="/privacidade" element={<PrivacyPage />} />
