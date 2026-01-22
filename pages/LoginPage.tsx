@@ -25,14 +25,14 @@ const LoginPage: React.FC = () => {
     if (success) {
       navigate('/dashboard');
     } else {
-      setError('Credenciais inválidas. Por favor, verifique o seu número de processo e palavra-passe.');
+      setError('Credenciais inválidas. Por favor, verifique o seu número de processo e tente novamente.');
       setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-white dark:bg-slate-900 transition-colors duration-300">
-      <div className="w-full md:w-1/2 flex items-center justify-center p-8 md:p-16">
+      <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-8 md:p-16">
         <div className="w-full max-w-md animate-fade">
           <div className="flex items-center justify-between mb-12">
             <Link to="/" className="inline-flex items-center gap-2">
@@ -45,12 +45,12 @@ const LoginPage: React.FC = () => {
             </Link>
             
             <Link to="/" className="flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-primary transition-colors">
-              <ArrowLeft size={16} /> Voltar ao Início
+              <ArrowLeft size={16} /> Voltar
             </Link>
           </div>
 
           <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-2">{t('login_title')}</h1>
-          <p className="text-slate-500 dark:text-slate-400 mb-10">{t('login_subtitle')}</p>
+          <p className="text-slate-500 dark:text-slate-400 mb-8">{t('login_subtitle')}</p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -65,7 +65,7 @@ const LoginPage: React.FC = () => {
                   type="text" 
                   value={processNumber}
                   onChange={(e) => setProcessNumber(e.target.value)}
-                  placeholder="Ex: 2024001"
+                  placeholder="Introduza o nº de processo"
                   className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-primary focus:bg-white transition-all outline-none font-bold text-slate-800 dark:text-white"
                   required
                 />
@@ -75,7 +75,7 @@ const LoginPage: React.FC = () => {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider">{t('password')}</label>
-                <a href="#" className="text-xs font-bold text-primary dark:text-secondary hover:underline">{t('forgot_password')}</a>
+                <a href="#" className="text-xs font-bold text-primary dark:text-secondary hover:underline">Esqueceu a senha?</a>
               </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
@@ -85,14 +85,14 @@ const LoginPage: React.FC = () => {
                   type={showPassword ? "text" : "password"} 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="Palavra-passe"
                   className="w-full pl-12 pr-12 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl focus:border-primary focus:bg-white transition-all outline-none font-bold text-slate-800 dark:text-white"
                   required
                 />
                 <button 
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -100,7 +100,7 @@ const LoginPage: React.FC = () => {
             </div>
 
             {error && (
-              <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm font-bold rounded-xl border border-red-100 dark:border-red-900">
+              <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm font-bold rounded-xl border border-red-100">
                 {error}
               </div>
             )}
@@ -110,16 +110,19 @@ const LoginPage: React.FC = () => {
               disabled={isLoading}
               className="w-full bg-primary text-white py-5 rounded-2xl font-black text-lg shadow-xl hover:opacity-95 active:scale-[0.98] transition-all disabled:opacity-70 flex items-center justify-center gap-4"
             >
-              {isLoading ? 'AUTENTICANDO...' : 'ACEDER'}
+              {isLoading ? 'A VERIFICAR...' : 'ENTRAR NA PLATAFORMA'}
               {!isLoading && <ArrowRight size={20} />}
             </button>
-          </form>
 
-          <div className="mt-10 text-center">
-            <Link to="/registrar" className="text-sm font-bold text-slate-500 hover:text-primary transition-colors">
-              {t('create_account')}
-            </Link>
-          </div>
+            <div className="text-center pt-4">
+              <p className="text-sm font-bold text-slate-500">
+                Não tem conta?{' '}
+                <Link to="/registrar" className="text-primary dark:text-secondary hover:underline font-black">
+                  Criar conta agora
+                </Link>
+              </p>
+            </div>
+          </form>
         </div>
       </div>
 
@@ -132,7 +135,7 @@ const LoginPage: React.FC = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent"></div>
           <div className="absolute bottom-20 left-16 right-16">
-            <h2 className="text-4xl font-black text-white leading-tight">Digitalize a sua <br/><span className="text-secondary underline text-5xl">vida académica</span> hoje.</h2>
+            <h2 className="text-4xl font-black text-white leading-tight">Gira a sua <br/><span className="text-secondary underline text-5xl">vida académica</span> com eficiência.</h2>
           </div>
         </div>
       </div>

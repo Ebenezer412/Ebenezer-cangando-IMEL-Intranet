@@ -9,24 +9,31 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #003366;
-            --secondary-color: #FFD700;
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',
+                        secondary: '#FFD700',
+                    }
+                }
+            }
         }
-        body { font-family: 'Inter', sans-serif; }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s ease; }
         .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
-        .sidebar-item-active { background: rgba(255, 255, 255, 0.1); border-left: 4px solid var(--secondary-color); }
+        .dark .glass { background: rgba(15, 23, 42, 0.7); }
+        .sidebar-item-active { background: rgba(255, 255, 255, 0.1); border-left: 4px solid #FFD700; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade { animation: fadeIn 0.5s ease-out forwards; }
         
-        /* Custom Tailwind classes using CSS variables */
-        .bg-primary { background-color: var(--primary-color); }
-        .bg-secondary { background-color: var(--secondary-color); }
-        .text-primary { color: var(--primary-color); }
-        .text-secondary { color: var(--secondary-color); }
-        .border-primary { border-color: var(--primary-color); }
-        .border-secondary { border-color: var(--secondary-color); }
+        .bg-primary { background-color: #003366; }
+        .bg-secondary { background-color: #FFD700; }
+        .text-primary { color: #003366; }
+        .text-secondary { color: #FFD700; }
     </style>
 <script type="importmap">
 {
@@ -41,7 +48,7 @@
 }
 </script>
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
     <div id="root"></div>
 </body>
 </html>

@@ -11,41 +11,6 @@ interface SidebarProps {
   toggle: () => void;
 }
 
-const getTranslationKey = (label: string): string => {
-  const map: Record<string, string> = {
-    'Painel do Aluno': 'dashboard_student',
-    'Painel Docente': 'dashboard_teacher',
-    'Portal do Encarregado': 'dashboard_guardian',
-    'Direcção Geral': 'dashboard_director',
-    'Administração': 'dashboard_admin',
-    'Minhas Notas': 'my_grades',
-    'Notas do Educando': 'guardian_grades',
-    'Minha Assiduidade': 'my_attendance',
-    'Faltas do Educando': 'guardian_attendance',
-    'Horário de Aulas': 'my_schedule',
-    'Horário Escolar': 'guardian_schedule',
-    'Recursos Didácticos': 'my_resources',
-    'Materiais de Apoio': 'guardian_resources',
-    'Histórico Escolar': 'my_history',
-    'Percurso Académico': 'my_history',
-    'Pauta de Avaliação': 'grading_sheet',
-    'Horário Docente': 'teacher_schedule',
-    'Gestão de Conteúdos': 'content_mgmt',
-    'Análise Estatística': 'academic_analysis',
-    'Controlo Pedagógico': 'pedagogic_control',
-    'Gestão de Alunos': 'enrollment_mgmt',
-    'Estrutura Escolar': 'inst_structure',
-    'Mapas de Gestão': 'mgmt_maps',
-    'Registos de Auditoria': 'security_logs',
-    'Contas de Acesso': 'access_accounts',
-    'Identidade Visual': 'visual_id',
-    'Auditoria do Sistema': 'sys_audit',
-    'Comunicação': 'communication',
-    'Configurações': 'config'
-  };
-  return map[label] || label;
-};
-
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle }) => {
   const { user, logout } = useAuth();
   const { t } = useSettings();
@@ -90,7 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle }) => {
             `}
           >
             <link.icon className="w-5 h-5 flex-shrink-0" />
-            {isOpen && <span className="text-sm font-bold uppercase tracking-wide">{t(getTranslationKey(link.label))}</span>}
+            {isOpen && <span className="text-sm font-bold uppercase tracking-wide">{link.label}</span>}
           </NavLink>
         ))}
       </nav>
@@ -102,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle }) => {
           className="w-full flex items-center gap-4 px-4 py-3 text-white/60 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all"
         >
           <LogOut className="w-5 h-5 flex-shrink-0" />
-          {isOpen && <span className="text-sm font-bold uppercase tracking-wide">{t('logout')}</span>}
+          {isOpen && <span className="text-sm font-bold uppercase tracking-wide">Sair do Sistema</span>}
         </button>
       </div>
 

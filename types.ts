@@ -15,7 +15,19 @@ export interface User {
   email?: string;
   avatar?: string;
   turma?: string;
-  studentIds?: string[]; // IDs dos educandos associados (para Encarregados)
+  studentIds?: string[];
+  notificationPrefs?: {
+    email: boolean;
+    browser: boolean;
+    grades: boolean;
+  };
+}
+
+export interface QuarterGrades {
+  mac: number | null;
+  npp: number | null;
+  npt: number | null;
+  average: number | null;
 }
 
 export interface Grade {
@@ -23,40 +35,34 @@ export interface Grade {
   studentId: string;
   studentName: string; 
   subject: string;
-  mac: number;
-  npp: number;
-  npt: number;
-  average: number;
+  t1: QuarterGrades;
+  t2: QuarterGrades;
+  t3: QuarterGrades;
   faltas: number;
+  teacherId: string;
   updatedBy?: string;
   updatedAt?: string;
 }
 
-export interface AuditLog {
+export interface Notification {
   id: string;
-  user: string;
-  action: string;
-  target: string;
+  title: string;
+  message: string;
+  type: 'message' | 'announcement' | 'grade' | 'system';
+  read: boolean;
   timestamp: string;
-  details: string;
-}
-
-export interface ClassSchedule {
-  id: string;
-  day: string;
-  time: string;
-  subject: string;
-  room: string;
-  turma: string;
 }
 
 export interface LibraryResource {
   id: string;
   title: string;
   subject: string;
-  type: 'PDF' | 'DOC' | 'VIDEO';
+  type: 'PDF' | 'DOC' | 'VIDEO' | 'ZIP';
   author: string;
+  authorId: string;
   date: string;
+  size?: string;
+  turmaTarget?: string;
 }
 
 export interface Message {
@@ -81,4 +87,25 @@ export interface SystemSettings {
   primaryColor: string;
   secondaryColor: string;
   version: string;
+}
+
+// Added missing ClassSchedule interface
+export interface ClassSchedule {
+  id: string;
+  day: string;
+  time: string;
+  subject: string;
+  room: string;
+  turma: string;
+  teacherId: string;
+}
+
+// Added missing AuditLog interface
+export interface AuditLog {
+  id: string;
+  user: string;
+  action: string;
+  target: string;
+  details: string;
+  timestamp: string;
 }
