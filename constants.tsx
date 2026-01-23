@@ -2,12 +2,15 @@
 import { 
   LayoutDashboard, Users, ClipboardList, Calendar, FileText, MessageSquare, 
   Settings, BarChart3, Library, History, Palette, Eye, Activity, Briefcase, 
-  FileBarChart, BookMarked, Clock, BookOpen, Bell, ShieldAlert, Zap, Globe, FileStack
+  FileBarChart, BookMarked, Clock, BookOpen, Bell, ShieldAlert, Zap, Globe, FileStack,
+  User as UserIcon
 } from 'lucide-react';
 import { UserRole, SidebarItem, Grade, ClassSchedule, User } from './types';
 
 export const DEFAULT_PRIMARY_COLOR = '#003366'; 
 export const DEFAULT_SECONDARY_COLOR = '#FFD700'; 
+export const DEFAULT_SCHOOL_NAME = 'Instituto Médio de Economia de Luanda';
+export const DEFAULT_SCHOOL_ACRONYM = 'Intra IMEL';
 
 const generateUniqueMockStudents = (): User[] => {
   const students: User[] = [];
@@ -69,7 +72,11 @@ export const SIDEBAR_LINKS: SidebarItem[] = [
   { icon: Zap, label: 'Consola de Gestão', path: '/dashboard', roles: [UserRole.ADMIN] },
   { icon: Users, label: 'Contas de Acesso', path: '/admin/usuarios', roles: [UserRole.ADMIN] },
   { icon: Palette, label: 'Identidade Visual', path: '/admin/branding', roles: [UserRole.ADMIN] },
-  { icon: Settings, label: 'Definições do Sistema', path: '/config', roles: [UserRole.ADMIN, UserRole.ALUNO, UserRole.PROFESSOR, UserRole.ENCARREGADO] },
+  
+  // Definições Adaptativas
+  // Para ADMIN mostra configurações do sistema, para outros mostra Perfil
+  { icon: UserIcon, label: 'Meu Perfil', path: '/perfil', roles: [UserRole.ALUNO, UserRole.PROFESSOR, UserRole.ENCARREGADO, UserRole.DIRETOR] },
+  { icon: Settings, label: 'Definições do Sistema', path: '/admin/branding', roles: [UserRole.ADMIN] },
 
   // Biblioteca (Todos)
   { icon: BookOpen, label: 'Biblioteca Digital', path: '/biblioteca', roles: Object.values(UserRole) },

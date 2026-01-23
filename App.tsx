@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, createContext, useContext, useMemo } from 'react';
 import { 
   HashRouter as Router, 
@@ -20,6 +21,7 @@ import SchedulePage from './pages/SchedulePage';
 import LibraryPage from './pages/LibraryPage';
 import MessagesPage from './pages/MessagesPage';
 import BrandingPage from './pages/BrandingPage';
+import ProfilePage from './pages/ProfilePage';
 import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
 
@@ -155,12 +157,18 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     const saved = localStorage.getItem('imel_user');
     if (saved) {
       const parsedUser = JSON.parse(saved);
-      setUser(parsedUser);
+      // Re-fetch user from DB to handle updates in real-time
+      const dbUser = users.find(u => u.id === parsedUser.id);
+      if (dbUser) {
+        setUser(dbUser);
+      } else {
+        setUser(parsedUser);
+      }
       if (parsedUser.role === UserRole.ENCARREGADO && parsedUser.studentIds?.length > 0) setActiveStudentId(parsedUser.studentIds[0]);
       else if (parsedUser.role === UserRole.ALUNO) setActiveStudentId(parsedUser.id);
     }
     setIsLoading(false);
-  }, []);
+  }, [users]);
 
   const login = async (process: string, pass: string) => {
     const found = users.find((u: any) => u.processNumber === process);
@@ -184,7 +192,6 @@ const SettingsContext = createContext<any>(undefined);
 export const useSettings = () => useContext(SettingsContext)!;
 const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => (localStorage.getItem('imel_theme') as any) || 'light');
-  // Initialize lang and toggleLang to support Topbar implementation and avoid crashes
   const [lang, setLang] = useState<'pt' | 'en'>(() => (localStorage.getItem('imel_lang') as any) || 'pt');
   
   useEffect(() => { 
@@ -200,7 +207,6 @@ const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children })
   const toggleLang = () => setLang(prev => prev === 'pt' ? 'en' : 'pt');
   
   const t = (key: string) => (translations['pt'] as any)[key] || key;
-  // Providing full state required by useSettings consumers like Topbar.tsx
   return <SettingsContext.Provider value={{ theme, toggleTheme, lang, toggleLang, t }}>{children}</SettingsContext.Provider>;
 };
 
@@ -210,9 +216,24 @@ const SystemAdminProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [settings, setSettings] = useState<SystemSettings>(() => {
     const saved = localStorage.getItem('imel_system_settings');
     if (saved) return JSON.parse(saved);
-    return { schoolName: 'Instituto Médio de Economia de Luanda', schoolAcronym: 'Intra IMEL', primaryColor: DEFAULT_PRIMARY_COLOR, secondaryColor: DEFAULT_SECONDARY_COLOR, version: '3.0.0-AI' };
+    return { 
+      schoolName: 'Instituto Médio de Economia de Luanda', 
+      schoolAcronym: 'Intra IMEL', 
+      primaryColor: DEFAULT_PRIMARY_COLOR, 
+      secondaryColor: DEFAULT_SECONDARY_COLOR, 
+      version: '3.0.0-AI' 
+    };
   });
-  useEffect(() => { localStorage.setItem('imel_system_settings', JSON.stringify(settings)); }, [settings]);
+
+  useEffect(() => { 
+    localStorage.setItem('imel_system_settings', JSON.stringify(settings)); 
+    // Sincroniza variáveis CSS instantaneamente para todos os usuários
+    document.documentElement.style.setProperty('--color-primary', settings.primaryColor);
+    document.documentElement.style.setProperty('--color-secondary', settings.secondaryColor);
+    // Atualiza o título da aba do navegador em tempo real
+    document.title = `${settings.schoolAcronym} - SIG Escolar`;
+  }, [settings]);
+
   return <SystemAdminContext.Provider value={{ settings, updateSettings: (n: any) => setSettings(p => ({ ...p, ...n })) }}>{children}</SystemAdminContext.Provider>;
 };
 
@@ -221,13 +242,26 @@ const SystemAdminProvider: React.FC<{ children: React.ReactNode }> = ({ children
 const AppShell: React.FC = () => {
   const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  
+  // Close sidebar by default on mobile
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) setSidebarOpen(false);
+      else setSidebarOpen(true);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   if (!user) return <Navigate to="/login" />;
+
   return (
     <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
       <Sidebar isOpen={sidebarOpen} toggle={() => setSidebarOpen(!sidebarOpen)} />
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'} ml-0 w-full overflow-x-hidden`}>
         <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-        <main className="p-4 md:p-8 flex-1 animate-fade overflow-x-hidden">
+        <main className="p-4 sm:p-6 md:p-8 flex-1 animate-fade overflow-x-hidden w-full max-w-[2000px] mx-auto">
           <Routes>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/notas" element={<GradesPage />} />
@@ -244,7 +278,7 @@ const AppShell: React.FC = () => {
             <Route path="/direcao/relatorios" element={<AcademicStatsPage />} />
             <Route path="/admin/usuarios" element={<UserManagementPage />} />
             <Route path="/admin/branding" element={<BrandingPage />} />
-            <Route path="/config" element={<BrandingPage />} />
+            <Route path="/perfil" element={<ProfilePage />} />
             <Route path="/suporte" element={<SupportPage />} />
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>

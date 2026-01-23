@@ -15,6 +15,11 @@ const AttendancePage: React.FC = () => {
   const aulasTotais = studentGrades.length * 30;
   const percPresenca = aulasTotais > 0 ? Math.round(((aulasTotais - totalFaltas) / aulasTotais) * 100) : 100;
 
+  const handleJustifyClick = () => {
+    // Mensagem exata conforme solicitado
+    alert("VOCÊ PRECISA SE DIRIGIR A PAPELARIA PARA JUSTIFICAR A FALTA");
+  };
+
   return (
     <div className="space-y-8 animate-fade">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -22,7 +27,10 @@ const AttendancePage: React.FC = () => {
           <h1 className="text-3xl font-black text-slate-900 dark:text-white">Relatório de Assiduidade</h1>
           <p className="text-slate-500 dark:text-slate-400">Monitoramento de faltas para {activeStudent?.name}.</p>
         </div>
-        <button className="px-6 py-3 bg-primary text-white rounded-2xl font-bold shadow-lg flex items-center gap-2">
+        <button 
+          onClick={handleJustifyClick}
+          className="px-6 py-3 bg-primary text-white rounded-2xl font-bold shadow-lg flex items-center gap-2 hover:scale-105 transition-all"
+        >
           <FileText size={18}/> Justificar Falta
         </button>
       </div>

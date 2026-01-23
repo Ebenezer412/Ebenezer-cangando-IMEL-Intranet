@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useSystemAdmin, useSettings } from '../App';
 import { Palette, Globe, Save, RefreshCw, AlertCircle } from 'lucide-react';
+import { DEFAULT_PRIMARY_COLOR, DEFAULT_SECONDARY_COLOR, DEFAULT_SCHOOL_NAME, DEFAULT_SCHOOL_ACRONYM } from '../constants';
 
 const BrandingPage: React.FC = () => {
   const { settings, updateSettings } = useSystemAdmin();
@@ -11,21 +12,25 @@ const BrandingPage: React.FC = () => {
 
   const handleSave = () => {
     setIsSaving(true);
-    // Simulate API delay
+    // Simula atraso de rede mas a aplicação no contexto é instantânea
     setTimeout(() => {
       updateSettings(formData);
       setIsSaving(false);
-      alert('Configurações de marca aplicadas com sucesso!');
-    }, 800);
+      alert('Configurações de marca aplicadas com sucesso para todo o sistema!');
+    }, 500);
   };
 
   const handleReset = () => {
-    if (confirm('Deseja resetar para as cores originais do sistema?')) {
-      setFormData({
+    if (confirm('Deseja resetar todas as definições para os valores originais de fábrica do sistema?')) {
+      const resetData = {
         ...formData,
-        primaryColor: '#003366',
-        secondaryColor: '#FFD700'
-      });
+        schoolName: DEFAULT_SCHOOL_NAME,
+        schoolAcronym: DEFAULT_SCHOOL_ACRONYM,
+        primaryColor: DEFAULT_PRIMARY_COLOR,
+        secondaryColor: DEFAULT_SECONDARY_COLOR
+      };
+      setFormData(resetData);
+      updateSettings(resetData);
     }
   };
 
@@ -36,7 +41,7 @@ const BrandingPage: React.FC = () => {
           <Palette className="text-primary" />
           Marca do Sistema
         </h1>
-        <p className="text-slate-500 dark:text-slate-400">Configure a identidade visual e o nome da instituição.</p>
+        <p className="text-slate-500 dark:text-slate-400">Configure a identidade visual e o nome da instituição para todos os usuários.</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
@@ -76,7 +81,7 @@ const BrandingPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-bold text-slate-700 dark:text-slate-200">Cor Primária</p>
-                <p className="text-xs text-slate-400">Usada no menu, botões e cabeçalhos.</p>
+                <p className="text-xs text-slate-400">Barra lateral e elementos principais.</p>
               </div>
               <input 
                 type="color" 
@@ -89,7 +94,7 @@ const BrandingPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-bold text-slate-700 dark:text-slate-200">Cor Secundária</p>
-                <p className="text-xs text-slate-400">Usada para destaques, ícones e alertas.</p>
+                <p className="text-xs text-slate-400">Destaques e ícones secundários.</p>
               </div>
               <input 
                 type="color" 
@@ -105,25 +110,25 @@ const BrandingPage: React.FC = () => {
       <div className="bg-primary/5 p-6 rounded-3xl border border-primary/20 flex items-start gap-4">
         <AlertCircle className="text-primary shrink-0" size={24} />
         <div>
-          <p className="font-bold text-primary">Atenção</p>
-          <p className="text-sm text-slate-600 dark:text-slate-400">Ao salvar, as alterações de cores e nome serão aplicadas instantaneamente para todos os usuários logados. Certifique-se de usar cores com bom contraste para acessibilidade.</p>
+          <p className="font-bold text-primary tracking-tight">Alterações em Tempo Real</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">As mudanças de cores e nomes refletem instantaneamente no cabeçalho, barra lateral e em todas as telas de todos os usuários logados no sistema.</p>
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row items-center gap-4">
         <button 
           onClick={handleSave} 
           disabled={isSaving}
-          className="flex-1 bg-primary text-white py-5 rounded-2xl font-bold text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+          className="w-full sm:flex-1 bg-primary text-white py-5 rounded-2xl font-bold text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
         >
           {isSaving ? <RefreshCw className="animate-spin" /> : <Save />} 
-          Salvar e Aplicar Branding
+          Aplicar Definições
         </button>
         <button 
           onClick={handleReset}
-          className="px-8 py-5 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded-2xl font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all"
+          className="w-full sm:w-auto px-8 py-5 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded-2xl font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all"
         >
-          Resetar Padrão
+          Resetar Padrão Original
         </button>
       </div>
     </div>
