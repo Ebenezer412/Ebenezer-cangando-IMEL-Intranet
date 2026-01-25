@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  GraduationCap, 
   ShieldCheck, 
   Zap, 
   Users, 
@@ -16,7 +15,8 @@ import {
   HelpCircle,
   Lightbulb,
   Layout,
-  Smartphone
+  Smartphone,
+  GraduationCap
 } from 'lucide-react';
 import { useSettings, useSystemAdmin } from '../App';
 
@@ -36,8 +36,8 @@ const LandingPage: React.FC = () => {
       {/* Barra de Navegação */}
       <nav className="px-8 py-6 flex items-center justify-between max-w-7xl mx-auto sticky top-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-50">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
-            <GraduationCap size={24} />
+          <div className="p-2 bg-primary rounded-xl">
+            <GraduationCap className="text-secondary w-6 h-6" />
           </div>
           <span className="font-extrabold text-2xl tracking-tighter text-primary dark:text-white">
             {settings.schoolAcronym}
@@ -248,9 +248,7 @@ const LandingPage: React.FC = () => {
       <footer className="py-16 border-t border-slate-100 dark:border-slate-800 text-center bg-white dark:bg-slate-900">
         <div className="flex flex-col items-center gap-6 max-w-7xl mx-auto px-8">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
-              < GraduationCap size={24} />
-            </div>
+            <GraduationCap className="text-primary w-8 h-8" />
             <span className="font-black text-2xl text-slate-900 dark:text-white">{settings.schoolAcronym}</span>
           </div>
           

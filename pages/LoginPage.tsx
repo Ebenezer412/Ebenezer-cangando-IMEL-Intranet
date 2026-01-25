@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { GraduationCap, ArrowRight, Eye, EyeOff, Lock, User, ArrowLeft } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Lock, User, ArrowLeft, GraduationCap } from 'lucide-react';
 import { useAuth, useSettings, useSystemAdmin } from '../App';
 
 const LoginPage: React.FC = () => {
@@ -35,9 +35,9 @@ const LoginPage: React.FC = () => {
       <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-8 md:p-16">
         <div className="w-full max-w-md animate-fade">
           <div className="flex items-center justify-between mb-12">
-            <Link to="/" className="inline-flex items-center gap-2">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
-                <GraduationCap size={24} />
+            <Link to="/" className="inline-flex items-center gap-3">
+              <div className="p-2 bg-primary rounded-xl">
+                <GraduationCap className="text-secondary w-6 h-6" />
               </div>
               <span className="font-extrabold text-2xl text-primary dark:text-white">
                 {settings.schoolAcronym}
@@ -135,6 +135,9 @@ const LoginPage: React.FC = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent"></div>
           <div className="absolute bottom-20 left-16 right-16">
+             <div className="mb-6 bg-white p-4 inline-block rounded-2xl shadow-xl">
+                <GraduationCap className="text-primary w-12 h-12" />
+             </div>
             <h2 className="text-4xl font-black text-white leading-tight">Gira a sua <br/><span className="text-secondary underline text-5xl">vida académica</span> com eficiência.</h2>
           </div>
         </div>
