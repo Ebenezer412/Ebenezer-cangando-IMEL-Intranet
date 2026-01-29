@@ -15,7 +15,7 @@ export const DEFAULT_SCHOOL_ACRONYM = 'Intra IMEL';
 const generateUniqueMockStudents = (): User[] => {
   const students: User[] = [];
   const names = [
-    "João Manuel", "Ana Manuel", "Pedro Afonso", "Maria Diniz", "António Costa", 
+    "Alexandre Alfredo Tumbo", "Antonio Quissanga", "Pedro Afonso", "Maria Diniz", "António Costa", 
     "Beatriz Silva", "Carlos Jorge", "Daniela Bento", "Edgar Neto", "Feliciana Cruz",
     "Gabriel Luamba", "Helena Paulo", "Igor Gomes", "Janeth Faria", "Kevin Santos",
     "Lurdes Mendes", "Manuel Diogo", "Nádia Rocha", "Osvaldo Jamba", "Patrícia Lima",
@@ -28,7 +28,8 @@ const generateUniqueMockStudents = (): User[] => {
     students.push({
       id: `std-${index + 1}`,
       name: name,
-      processNumber: (2022450 + index).toString(),
+      processNumber: `aluno${index + 1}123`,
+      password: `aluno${index + 1}123`,
       role: UserRole.ALUNO,
       turma: 'I12B (Inf. Gestão)'
     });
@@ -38,10 +39,10 @@ const generateUniqueMockStudents = (): User[] => {
 
 export const TEST_USERS: User[] = [
   ...generateUniqueMockStudents(),
-  { id: '2', name: 'Eng. Domingos Neto', processNumber: 'IT-3001', role: UserRole.PROFESSOR }, 
-  { id: '3', name: 'Admin Geral', processNumber: '999000', role: UserRole.ADMIN },
-  { id: '4', name: 'Dr. Augusto Feliciano', processNumber: '888000', role: UserRole.DIRETOR },
-  { id: '5', name: 'Pedro João', processNumber: '777000', role: UserRole.ENCARREGADO, studentIds: ['std-1', 'std-2'] },
+  { id: '2', name: 'Eduardo Afonso Zamith', processNumber: 'professor123', password: 'professor123', role: UserRole.PROFESSOR }, 
+  { id: '3', name: 'EbenezerC.Vilola Cangondos', processNumber: 'admin123', password: 'admin123', role: UserRole.ADMIN },
+  { id: '4', name: 'Lizandro Sony', processNumber: 'diretor123', password: 'diretor123', role: UserRole.DIRETOR },
+  { id: '5', name: 'Rita José', processNumber: 'encarregado123', password: 'encarregado123', role: UserRole.ENCARREGADO, studentIds: ['std-1', 'std-2'] },
 ];
 
 export const SIDEBAR_LINKS: SidebarItem[] = [
@@ -86,16 +87,16 @@ export const SIDEBAR_LINKS: SidebarItem[] = [
 const generateMockGrades = (): Grade[] => {
   const allGrades: Grade[] = [];
   const subjects = [
-    { name: 'TLP (Prog. C#)', teacherId: '2' },
-    { name: 'TRECE (Redes)', teacherId: '2' },
+    { name: 'TLP', teacherId: '2' },
+    { name: 'TREI (Redes)', teacherId: '2' },
     { name: 'Sistemas de Info.', teacherId: '99' },
     { name: 'Matemática', teacherId: '98' },
-    { name: 'Língua Portuguesa', teacherId: '96' },
-    { name: 'OGE', teacherId: '97' },
+    { name: 'Inglesh Tecnico', teacherId: '96' },
+    { name: 'IAG', teacherId: '97' },
     { name: 'Empreendedorismo', teacherId: '97' },
     { name: 'Inglês Técnico', teacherId: '95' },
-    { name: 'PAPE', teacherId: '2' },
-    { name: 'Educação Física', teacherId: '94' }
+    { name: 'OAE', teacherId: '2' },
+    { name: 'PT', teacherId: '94' }
   ];
 
   const students = generateUniqueMockStudents();

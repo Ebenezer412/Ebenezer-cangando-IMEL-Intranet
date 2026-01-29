@@ -67,8 +67,47 @@ Como o projeto utiliza módulos ES6 nativos e `importmap`, não é necessário u
 
 ## 📖 Guia de Uso
 
+### Credenciais de Teste do Sistema
+
+#### 👨‍🎓 Alunos
+| Número de Processo | Senha | Nome |
+|---|---|---|
+| `aluno1123` | `aluno1123` | Alexandre Alfredo Tumbo |
+| `aluno2123` | `aluno2123` | Antonio Quissanga |
+| `aluno3123` | `aluno3123` | Pedro Afonso |
+| `aluno4123` | `aluno4123` | Maria Diniz |
+| `aluno5123` | `aluno5123` | António Costa |
+| `aluno6123` | `aluno6123` | Beatriz Silva |
+| `aluno7123` | `aluno7123` | Carlos Jorge |
+| `aluno8123` | `aluno8123` | Daniela Bento |
+| `aluno9123` | `aluno9123` | Edgar Neto |
+| `aluno10123` | `aluno10123` | Feliciana Cruz |
+| *...e mais 25 alunos com padrão `alunoN123`* | | |
+
+#### 👨‍🏫 Professor
+| Número de Processo | Senha | Nome |
+|---|---|---|
+| `professor123` | `professor123` | Eduardo Afonso Zamith |
+
+#### 👔 Diretor
+| Número de Processo | Senha | Nome |
+|---|---|---|
+| `diretor123` | `diretor123` | Lizandro Sony |
+
+#### 🔧 Administrador
+| Número de Processo | Senha | Nome |
+|---|---|---|
+| `admin123` | `admin123` | EbenezerC.Vilola Cangondos |
+
+#### 👨‍👩‍👧 Encarregado de Educação
+| Número de Processo | Senha | Nome |
+|---|---|---|
+| `encarregado123` | `encarregado123` | Rita José |
+
+---
+
 ### Acesso Inicial
-- **Login:** Utilize o Número de Processo fornecido pela secretaria.
+- **Login:** Utilize o Número de Processo fornecido na tabela acima.
 - **Primeiro Acesso:** Clique em "Criar conta agora", insira seu processo e defina uma senha e e-mail.
 - **Recuperação:** Se esquecer a senha, utilize o fluxo "Esqueceu a senha?" para redefinir via e-mail institucional.
 

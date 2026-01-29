@@ -13,6 +13,7 @@ export interface User {
   processNumber: string;
   role: UserRole;
   email?: string;
+  password?: string;
   avatar?: string;
   turma?: string;
   studentIds?: string[];

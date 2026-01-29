@@ -171,7 +171,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   }, [users]);
 
   const login = async (process: string, pass: string) => {
-    const found = users.find((u: any) => u.processNumber === process);
+    console.log('Tentando login com:', { process, pass });
+    console.log('Usuários disponíveis:', users.map(u => ({ id: u.id, processNumber: u.processNumber, password: u.password })));
+    const found = users.find((u: any) => u.processNumber === process && u.password === pass);
+    console.log('Usuário encontrado:', found);
     if (found) {
       setUser(found);
       localStorage.setItem('imel_user', JSON.stringify(found));
